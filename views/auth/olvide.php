@@ -1,6 +1,6 @@
 <main class="auth">
   <h2 class="auth__heading"><?php echo $titulo; ?></h2>
-  <p class="texto">Recupera tu acceso a DevWebCamp</p>
+  <p class="auth__texto">Recupera tu acceso a DevWebCamp</p>
 
 <form action="" class="formulario">
 
