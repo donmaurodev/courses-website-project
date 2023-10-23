@@ -146,11 +146,11 @@ class ActiveRecord {
             if($key == array_key_last($array)){
                 $query .= "$ {key} = '$value'";
             }else{
-                $query .= "$ {key} = '$value' AND";  
+                $query .= "$ {key} = '$value' AND ";  
             }
         }
         $resultado = self::consultarSQL($query);
-        return array_shift( $resultado ) ;
+        return $resultado;
     }
     public static function total($columna = '', $valor = '') {
         $query = "SELECT COUNT(*) FROM " . static::$tabla;
