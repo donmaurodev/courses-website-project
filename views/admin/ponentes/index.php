@@ -50,3 +50,8 @@
       <p class="text-center">No hay ponentes aun</p>
   <?php } ?>
 </div>
+
+<?php 
+  echo $paginacion;
+
+?>

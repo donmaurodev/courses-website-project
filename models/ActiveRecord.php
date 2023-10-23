@@ -123,6 +123,12 @@ class ActiveRecord {
         $resultado = self::consultarSQL($query);
         return array_shift( $resultado ) ;
     }
+    //Paginar los registros
+    public static function paginar($por_pagina, $offset) {
+        $query = "SELECT * FROM " . static::$tabla . " ORDER BY id DESC LIMIT ${por_pagina} OFFSET ${offset} " ;
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
 
     // Busqueda Where con Columna 
     public static function where($columna, $valor) {
@@ -130,7 +136,16 @@ class ActiveRecord {
         $resultado = self::consultarSQL($query);
         return array_shift( $resultado ) ;
     }
+    public static function total($columna = '', $valor = '') {
+        $query = "SELECT COUNT(*) FROM " . static::$tabla;
+        if($columna) {
+            $query .= " WHERE ${columna} = ${valor}";
+        }
+        $resultado = self::$db->query($query);
+        $total = $resultado->fetch_array();
 
+        return array_shift($total);
+    }
     // crea un nuevo registro
     public function crear() {
         // Sanitizar los datos

@@ -2,24 +2,44 @@
 
 namespace Controllers;
 
-    use Model\Ponente;
+use Classes\Paginacion;
+use Model\Ponente;
     use MVC\Router;
     use Intervention\Image\ImageManagerStatic as Image;
     class PonentesController {
 
 
     public static function index(Router $router) {
-        $ponentes = Ponente::all();
+        $pagina_actual = $_GET['page'];
+        $pagina_actual = filter_var($pagina_actual,FILTER_VALIDATE_INT);
+        if(!$pagina_actual || $pagina_actual < 1 ){
+            header('Location: /admin/ponentes?page=1');
+        }
+        $registro_por_pagina = 4;
+        $total = Ponente::total();
 
+        $paginacion = new Paginacion($pagina_actual,$registro_por_pagina,$total);
+
+        if($paginacion->total_paginas() < $pagina_actual){
+            header('Location: /admin/ponentes?page=1');
+        }
+        
+        $ponentes = Ponente::paginar($registro_por_pagina, $paginacion->offset());
+        if(!is_admin()){
+            header('Location: /login');
+        }
         $router->render('admin/ponentes/index', [
         'titulo' => 'Ponentes / Conferencias',
-        'ponentes' => $ponentes
-        ]);
+        'ponentes' => $ponentes,
+        'paginacion' => $paginacion->paginacion()
+            ]);
     }
     public static function crear(Router $router) {
         $alertas = [];
         $ponente = new Ponente;
-
+        if(!is_admin()){
+            header('Location: /login');
+        }
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
         
             // Leer imagen
@@ -70,6 +90,9 @@ namespace Controllers;
         ]);
     }
     public static function editar(Router $router) {
+        if(!is_admin()){
+            header('Location: /login');
+        }
         $alertas = [];
 
         $id =$_GET['id'];
@@ -89,6 +112,9 @@ namespace Controllers;
         $ponente->imagen_actual = $ponente->imagen;
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            if(!is_admin()){
+                header('Location: /login');
+            }
  // Leer imagen
             if(!empty($_FILES['imagen']['tmp_name'])) {
                             
@@ -140,6 +166,9 @@ namespace Controllers;
     }
     public static function eliminar(Router $router) {
 
+        if(!is_admin()){
+            header('Location: /login');
+        }
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $id = $_POST['id'];
             $ponente = Ponente::find($id);
